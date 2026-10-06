@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t calculator:${{ github.sha }} .
+
+      - name: Run unit tests inside the container
+        run: |
+          docker run --rm --entrypoint python calculator:${{ github.sha }} \
+            -m unittest discover -s tests -v
+
+  
